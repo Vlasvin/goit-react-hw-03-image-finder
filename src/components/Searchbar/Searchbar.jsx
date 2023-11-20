@@ -6,6 +6,7 @@ import {
   SearchFormBtnLabel,
   SearchFormInput,
 } from 'components/Searchbar/Searchbar.styled';
+import { FaSearch } from 'react-icons/fa';
 
 export class Searchbar extends Component {
   state = {
@@ -36,7 +37,8 @@ export class Searchbar extends Component {
       <SearchBar>
         <SearchForm onSubmit={this.handleSubmit}>
           <SearchFormBtn type="submit">
-            <SearchFormBtnLabel>Search</SearchFormBtnLabel>
+            <FaSearch />
+            <SearchFormBtnLabel></SearchFormBtnLabel>
           </SearchFormBtn>
 
           <SearchFormInput

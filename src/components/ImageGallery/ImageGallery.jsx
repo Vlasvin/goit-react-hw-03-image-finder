@@ -27,8 +27,8 @@ export class ImageGallery extends Component {
               onImageClick={() => setModalData(image.largeImageURL, image.tags)}
             />
           ))}
-          {loadMore && <Button onClick={handleLoadClick}></Button>}
         </ImgGallery>
+        {loadMore && <Button onClick={handleLoadClick}></Button>}
         {showModal && (
           <Modal modalData={modalData} closeModal={closeModal}></Modal>
         )}

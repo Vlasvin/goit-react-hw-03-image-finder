@@ -10,7 +10,7 @@ export class App extends Component {
     nameSearch: '',
     images: [],
     page: 1,
-    totalPages: 0,
+    totalPages: 1,
     loadMore: false,
     showModal: false,
     isLoader: false,
@@ -37,35 +37,34 @@ export class App extends Component {
   componentDidUpdate(prevProps, prevState) {
     const PrevState = prevState.nameSearch;
     const NextState = this.state.nameSearch;
-    const { page } = this.state;
+    const { page, totalPages } = this.state;
 
     if (PrevState !== NextState || page !== prevState.page) {
       // console.log(prevState.page);
       // console.log(page);
-      this.setState({ isLoader: true });
-      setTimeout(() => {
-        const apiService = new ApiService(NextState, page);
-        apiService
-          .fetchImg(page)
-          .then(images => {
-            // console.log(page);
-            // console.log(images.totalHits);
-            if (images.hits.length > 0) {
-              this.setState(prevState => ({
-                images:
-                  page === 1
-                    ? images.hits
-                    : [...prevState.images, ...images.hits],
-                totalPages: Math.ceil(images.totalHits / 12),
+      this.setState({ isLoader: true, loadMore: false });
 
-                loadMore: this.state.totalPages !== page,
-                // || this.state.totalPages > 1,
-              }));
-            }
-          })
-          .catch({})
-          .finally(this.setState({ isLoader: false }));
-      }, 3000);
+      const apiService = new ApiService(NextState, page);
+      apiService
+        .fetchImg(page)
+        .then(images => {
+          // console.log(page);
+          // console.log(images.totalHits);
+          if (images.hits.length > 0) {
+            this.setState(prevState => ({
+              images:
+                page === 1
+                  ? images.hits
+                  : [...prevState.images, ...images.hits],
+              totalPages: Math.ceil(images.totalHits / 12),
+              // loadMore: totalPages > 1 && page < totalPages,
+
+              loadMore: totalPages !== page || totalPages > 1,
+            }));
+          }
+        })
+        .catch({})
+        .finally(this.setState({ isLoader: false }));
     }
   }
 
@@ -73,16 +72,18 @@ export class App extends Component {
     return (
       <ImageFinder>
         <Searchbar onSubmit={this.handleSubmit}></Searchbar>
-        {this.isLoader && <Loader></Loader>}
-        <ImageGallery
-          loadMore={this.state.loadMore}
-          showModal={this.state.showModal}
-          images={this.state.images}
-          handleLoadClick={this.handleLoadClick}
-          closeModal={this.closeModal}
-          setModalData={this.setModalData}
-          modalData={this.state.modalData}
-        ></ImageGallery>
+        {!this.state.isLoader && (
+          <ImageGallery
+            loadMore={this.state.loadMore}
+            showModal={this.state.showModal}
+            images={this.state.images}
+            handleLoadClick={this.handleLoadClick}
+            closeModal={this.closeModal}
+            setModalData={this.setModalData}
+            modalData={this.state.modalData}
+          ></ImageGallery>
+        )}
+        {this.state.isLoader && <Loader></Loader>}
       </ImageFinder>
     );
   }
