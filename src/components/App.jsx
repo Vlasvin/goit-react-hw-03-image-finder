@@ -39,7 +39,7 @@ export class App extends Component {
     const { page } = this.state;
 
     if (PrevState !== NextState || page !== prevState.page) {
-      this.setState({ isLoader: true, loadMore: false });
+      this.setState({ isLoader: true, loadMore: false, error: null });
 
       const apiService = new ApiService(NextState, page);
       apiService
