@@ -60,7 +60,7 @@ export class App extends Component {
           }
         })
         .catch(error => {
-          this.setState({ error });
+          this.setState({ images: [], error });
         })
         .finally(this.setState({ isLoader: false }));
     }
