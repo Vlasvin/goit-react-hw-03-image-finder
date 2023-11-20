@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
-import { ImageFinder } from './Searchbar/Searchbar.styled';
+import { ImageFinder, ErrorMsg } from './App.styled';
 import ApiService from 'services/api';
 import { Loader } from './Loader/Loader';
 
@@ -10,11 +10,11 @@ export class App extends Component {
     nameSearch: '',
     images: [],
     page: 1,
-    totalPages: 1,
     loadMore: false,
     showModal: false,
     isLoader: false,
     modalData: { img: '', tags: '' },
+    error: null,
   };
 
   handleSubmit = nameSearch => {
@@ -23,7 +23,6 @@ export class App extends Component {
 
   handleLoadClick = prevState => {
     this.setState({ page: this.state.page + 1 });
-    // console.log(this.state.page);
   };
 
   setModalData = (img, tags) => {
@@ -37,32 +36,32 @@ export class App extends Component {
   componentDidUpdate(prevProps, prevState) {
     const PrevState = prevState.nameSearch;
     const NextState = this.state.nameSearch;
-    const { page, totalPages } = this.state;
+    const { page } = this.state;
 
     if (PrevState !== NextState || page !== prevState.page) {
-      // console.log(prevState.page);
-      // console.log(page);
       this.setState({ isLoader: true, loadMore: false });
 
       const apiService = new ApiService(NextState, page);
       apiService
         .fetchImg(page)
         .then(images => {
-          // console.log(page);
           if (images.hits.length > 0) {
             this.setState(prevState => ({
               images:
                 page === 1
                   ? images.hits
                   : [...prevState.images, ...images.hits],
-              totalPages: Math.ceil(images.totalHits / 12),
-              // loadMore: totalPages > 1 && page < totalPages,
-
-              loadMore: totalPages !== page || totalPages > 1,
+              loadMore: page < Math.ceil(images.totalHits / 12),
             }));
+          } else {
+            return Promise.reject(
+              new Error('Oops... there are no images matching your search...')
+            );
           }
         })
-        .catch({})
+        .catch(error => {
+          this.setState({ error });
+        })
         .finally(this.setState({ isLoader: false }));
     }
   }
@@ -71,6 +70,7 @@ export class App extends Component {
     return (
       <ImageFinder>
         <Searchbar onSubmit={this.handleSubmit}></Searchbar>
+        {this.state.error && <ErrorMsg>{this.state.error.message}</ErrorMsg>}
         {!this.state.isLoader && (
           <ImageGallery
             loadMore={this.state.loadMore}

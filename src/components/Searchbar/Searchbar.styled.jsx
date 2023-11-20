@@ -1,12 +1,5 @@
 import styled from 'styled-components';
 
-export const ImageFinder = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-gap: 16px;
-  padding-bottom: 24px;
-`;
-
 export const SearchBar = styled.header`
   top: 0;
   left: 0;
