@@ -8,7 +8,7 @@ export const BtnLoadMore = styled.button`
   display: inline-block;
   color: #fff;
   border: 0;
-  border-radius: px;
+  border-radius: 40px;
   text-decoration: none;
   cursor: pointer;
   font-family: inherit;

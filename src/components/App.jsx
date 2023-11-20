@@ -49,7 +49,6 @@ export class App extends Component {
         .fetchImg(page)
         .then(images => {
           // console.log(page);
-          // console.log(images.totalHits);
           if (images.hits.length > 0) {
             this.setState(prevState => ({
               images:
