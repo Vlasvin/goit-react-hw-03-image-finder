@@ -1,33 +1,38 @@
 import React, { Component } from 'react';
 import { ImgGallery } from 'components/ImageGallery/ImageGallery.styled';
 import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
-import ApiService from 'servises/api';
+import { Button } from 'components/Button/Button';
+import { Modal } from 'components/Modal/Modal';
 
 export class ImageGallery extends Component {
-  state = {
-    images: [],
-    smallImg: '',
-    largeImg: '',
-    id: null,
-  };
-
-  componentDidUpdate = (prevProps, prevState) => {
-    const PrevProps = prevProps.value;
-    const NextProps = this.props.value;
-    if (PrevProps !== NextProps) {
-      const apiService = new ApiService(NextProps);
-      apiService.fetchImg().then(data => {
-        this.setState({ images: data });
-        console.log(data.hits[0]);
-      });
-    }
-  };
-
   render() {
+    const {
+      images,
+      handleLoadClick,
+      loadMore,
+      modalData,
+      setModalData,
+      closeModal,
+      showModal,
+    } = this.props;
+
     return (
-      <ImgGallery>
-        <ImageGalleryItem images={this.state.images}>Image</ImageGalleryItem>
-      </ImgGallery>
+      <>
+        <ImgGallery>
+          {images?.map(image => (
+            <ImageGalleryItem
+              key={image.id}
+              item={image}
+              tags={image.tags}
+              onImageClick={() => setModalData(image.largeImageURL, image.tags)}
+            />
+          ))}
+          {loadMore && <Button onClick={handleLoadClick}></Button>}
+        </ImgGallery>
+        {showModal && (
+          <Modal modalData={modalData} closeModal={closeModal}></Modal>
+        )}
+      </>
     );
   }
 }

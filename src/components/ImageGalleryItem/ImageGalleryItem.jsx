@@ -5,15 +5,21 @@ import {
 } from 'components/ImageGalleryItem/ImageGalleryItem.styled';
 
 export class ImageGalleryItem extends Component {
+  handleClick = () => {
+    const { item, onImageClick } = this.props;
+    onImageClick(item.largeImageURL, item.tags);
+  };
+
   render() {
-    const images = this.props.images;
-    console.log(images.hits[0].id);
+    const { item } = this.props;
     return (
       <ImgGalleryItem>
-        <ImgItem src="" alt="" />
+        <ImgItem
+          src={item.webformatURL}
+          alt={item.tags}
+          onClick={this.handleClick}
+        />
       </ImgGalleryItem>
     );
   }
 }
-
-export default ImageGalleryItem;
